@@ -7,6 +7,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
+        <!-- jpackage rejects SNAPSHOT/text versions; keep a numeric app version here. -->
+        <app.version>1.0.0</app.version>
     </properties>
     <dependencies>
         <dependency>
@@ -34,17 +36,94 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
+                <configuration>
+                    <mainClass>com.reminder.App</mainClass>
+                    <!-- Custom runtime image built by `javafx:jlink` into target/runtime.
+                         jpackage wraps this image, so the trimmed JRE (incl. java.desktop
+                         for the system tray) ships inside the final package. -->
+                    <launcher>screenbreak</launcher>
+                    <jlinkImageName>runtime</jlinkImageName>
+                    <stripDebug>true</stripDebug>
+                    <noManPages>true</noManPages>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <compress>2</compress>
+                </configuration>
                 <executions>
+                    <!-- Keeps `mvn clean javafx:run` working for development. -->
                     <execution>
-                        <!-- Default configuration for running -->
-                        <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>com.reminder.App</mainClass>
+                        </configuration>
+                    </execution>
+                    <!-- Build the runtime image during `package`, before jpackage runs. -->
+                    <execution>
+                        <id>jlink-runtime</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jlink</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Wraps the jlink runtime image into native output via the JDK's jpackage.
+                     Base build produces a portable app-image (no extra tooling needed). -->
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.5</version>
+                <configuration>
+                    <name>ScreenBreak</name>
+                    <appVersion>${app.version}</appVersion>
+                    <vendor>com.reminder</vendor>
+                    <runtimeImage>${project.build.directory}/runtime</runtimeImage>
+                    <module>com.reminder/com.reminder.App</module>
+                    <destination>${project.build.directory}/dist</destination>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>app-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                        <configuration>
+                            <type>APP_IMAGE</type>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <!-- `mvn clean package -P installer` additionally builds a Windows .msi.
+             Requires the WiX Toolset v3 (candle/light) to be installed and on PATH. -->
+        <profile>
+            <id>installer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.6.5</version>
+                        <executions>
+                            <execution>
+                                <id>msi-installer</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>MSI</type>
+                                    <winMenu>true</winMenu>
+                                    <winShortcut>true</winShortcut>
+                                    <winDirChooser>true</winDirChooser>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -69,7 +69,3 @@ The `javafx:run` goal is preconfigured to launch `com.reminder.App`.
 - **`ReminderTimer`** owns a JavaFX `Timeline` that ticks once per second. It exposes two observable properties — `progressProperty()` (0.0 → 1.0) and `timeTextProperty()` (`"3 / 20 minutes"`) — and fires the break `Alert` when an interval completes.
 - **`TimerControl`** is a thin FXML controller: in `initialize()` it *binds* the progress bar and label directly to the timer's properties, so the UI stays in sync automatically. The Start/Stop buttons just delegate to `ReminderTimer.start(minutes)` / `stop()`.
 - **`App`** loads `timerControl.fxml`, sets up the AWT system tray, and keeps the JVM alive after the window closes via `Platform.setImplicitExit(false)`.
-
-## License
-
-Portions of the FXML scaffolding are derived from the Gluon JavaFX project template (BSD-style license; see the header in `timerControl.fxml`).
