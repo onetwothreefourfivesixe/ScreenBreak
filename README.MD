@@ -1,4 +1,4 @@
-# Screen Break Reminder
+# Screen Break
 
 A small JavaFX desktop app that reminds you to rest your eyes at a fixed interval. Enter how often you want to be reminded, start the timer, and the app pops up a break reminder each time the interval elapses — while a progress bar shows how far you are into the current interval. It lives in the system tray so it can keep running quietly in the background.
 
