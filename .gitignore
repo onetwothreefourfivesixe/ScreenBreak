@@ -1,0 +1,36 @@
+# Maven build outputs
+target/
+*.jar
+*.war
+*.ear
+
+# Gradle build outputs
+build/
+.gradle/
+
+# Compiled Java class files
+*.class
+
+# Log files
+*.log
+
+# IntelliJ IDEA settings
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse settings
+.metadata/
+.classpath
+.project
+.settings/
+
+# VS Code settings
+.vscode/
+.qodo/
+.github/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
