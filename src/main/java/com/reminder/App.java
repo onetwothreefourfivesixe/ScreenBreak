@@ -59,7 +59,7 @@ public class App extends Application {
         Image image = Toolkit.getDefaultToolkit().getImage(imageUrl);
 
         // Create the tray icon
-        TrayIcon trayIcon = new TrayIcon(image, "My JavaFX App");
+        TrayIcon trayIcon = new TrayIcon(image, "ScreenBreak");
         trayIcon.setImageAutoSize(true); // Resizes the image to fit the OS tray
 
         // --- ADD A RIGHT-CLICK MENU ---
