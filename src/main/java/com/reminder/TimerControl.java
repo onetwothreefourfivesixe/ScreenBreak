@@ -76,6 +76,12 @@ public class TimerControl {
         reminderMessageArea.textProperty().addListener((obs, oldText, newText) -> {
             reminderTimer.updateReminderMessage(newText);
         });
+
+        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (mediaPlayer != null) {
+                mediaPlayer.setVolume((double) newVal / 100.0);
+            }
+        });
     }
 
     private void loadConfigInfo() {
