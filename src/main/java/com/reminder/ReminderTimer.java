@@ -27,6 +27,7 @@ public class ReminderTimer {
     private Timeline timeline;
     private int totalSeconds;
     private int elapsedSeconds;
+    private String reminderMessage = "Look outside for 20 seconds.";
     private boolean running;
     private boolean soundAlertEnabled = false;
     private MediaPlayer mediaPlayer;
@@ -40,6 +41,10 @@ public class ReminderTimer {
 
     public void updateSoundAlertEnabled(boolean enabled) {
         this.soundAlertEnabled = enabled;
+    }
+
+    public void updateReminderMessage(String message) {
+        this.reminderMessage = message;
     }
 
     /**
@@ -121,7 +126,7 @@ public class ReminderTimer {
 
         // Already on the JavaFX thread (Timeline callback). show() is non-blocking,
         // so the timeline keeps ticking while the reminder is on screen.
-        Alert alert = new Alert(AlertType.INFORMATION, "Look outside for 20 seconds");
+        Alert alert = new Alert(AlertType.INFORMATION, reminderMessage);
         alert.setHeaderText(null);
         alert.setTitle("Screen Break");
         alert.show();

@@ -1,8 +1,6 @@
 package com.reminder;
 
 import javafx.stage.FileChooser;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -11,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import javafx.scene.media.Media;
@@ -38,6 +37,10 @@ public class TimerControl {
     private Label soundFileLabel;
     @FXML
     private Slider volumeSlider;
+    @FXML
+    private Label volumeLabel;
+    @FXML
+    private TextArea reminderMessageArea;
 
     private Media soundMedia;
     private MediaPlayer mediaPlayer;
@@ -54,13 +57,24 @@ public class TimerControl {
         statusLabel.textProperty().bind(status);
         reminderProgress.progressProperty().bind(reminderTimer.progressProperty());
         timeLabel.textProperty().bind(reminderTimer.timeTextProperty());
+        volumeLabel.textProperty().bind(volumeSlider.valueProperty().asString("%.0f%%"));
 
         loadConfigInfo();
 
-        intervalField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (!isFocused) { // just lost focus
-                saveConfigInfo();
+        // The scene/window aren't attached yet during initialize(), so wait for the
+        // window to exist and then persist all config info whenever it's closed.
+        intervalField.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((o, oldWin, newWin) -> {
+                    if (newWin != null) {
+                        newWin.setOnCloseRequest(e -> saveConfigInfo());
+                    }
+                });
             }
+        });
+
+        reminderMessageArea.textProperty().addListener((obs, oldText, newText) -> {
+            reminderTimer.updateReminderMessage(newText);
         });
     }
 
@@ -77,10 +91,23 @@ public class TimerControl {
         } else {
             soundAlertCheckBox.setSelected(false);
         }
+        if (appProperties.containsKey("reminderMessage")) {
+            reminderMessageArea.setText(appProperties.getProperty("reminderMessage"));
+        } else {
+            reminderMessageArea.setText("Look outside for 20 seconds.");
+        }
+        if (!appProperties.contains("volume")) {
+            volumeSlider.setValue(50);
+        } else {
+            volumeSlider.setValue(Double.parseDouble(appProperties.getProperty("volume")));
+        }
     }
 
     private void saveConfigInfo() {
         appProperties.setProperty("interval", intervalField.getText().trim());
+        appProperties.setProperty("soundAlertEnabled", Boolean.toString(soundAlertCheckBox.isSelected()));
+        appProperties.setProperty("reminderMessage", reminderMessageArea.getText().trim());
+        appProperties.setProperty("volume", Double.toString(volumeSlider.getValue()));
         new AppData().saveProperties(appProperties);
     }
 

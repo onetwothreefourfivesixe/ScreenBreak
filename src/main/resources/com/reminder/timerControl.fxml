@@ -5,7 +5,9 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -25,13 +27,18 @@
     </Label>
     <TextField fx:id="intervalField" maxWidth="Infinity" promptText="Enter the interval at which the reminder will pop up (minutes)."/>
     <Label fx:id="timeLabel" text="0 / 0 minutes"/>
+    <Separator prefWidth="200.0"/>
     <ProgressBar fx:id="reminderProgress" maxWidth="Infinity" progress="0.0"/>
     <AnchorPane prefHeight="200.0" prefWidth="200.0">
       <children>
         <CheckBox fx:id="soundAlertCheckBox" mnemonicParsing="false" onAction="#onSoundAlertChanged" text="Enable Sound Alert"/>
-        <Label fx:id="soundFileLabel" layoutX="152.0" text="No .mp3/.wav file uploaded"/>
-        <Slider fx:id="volumeSlider" layoutX="2.0" layoutY="42.0" prefHeight="14.0" prefWidth="300.0" value="50.0"/>
-        <Label layoutX="2.0" layoutY="25.0" text="Sound volume (0 to 100)"/>
+        <Label fx:id="soundFileLabel" layoutX="134.0" text="No .mp3/.wav file uploaded"/>
+        <Slider fx:id="volumeSlider" layoutX="470.0" layoutY="3.0" prefHeight="14.0" prefWidth="116.0" value="50.0"/>
+        <Label layoutX="311.0" text="Sound volume (0 to 100):"/>
+        <Label fx:id="volumeLabel" layoutX="448.0" layoutY="1.0" text="50"/>
+        <Separator layoutX="295.0" layoutY="-5.0" orientation="VERTICAL" prefHeight="157.0" prefWidth="4.0"/>
+        <Label layoutY="28.0" text="Edit reminder message:"/>
+        <TextArea fx:id="reminderMessageArea" layoutY="47.0" prefHeight="101.0" prefWidth="291.0" text="Look outside for 20 seconds."/>
       </children>
     </AnchorPane>
     <Region VBox.vgrow="ALWAYS"/>
@@ -40,8 +47,12 @@
         <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStart" text="Start the Reminder"/>
         <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onStop" text="Stop the Reminder"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Status:"/>
-        <Label fx:id="statusLabel" text="Idle"/>
+        <AnchorPane style="-fx-border-color: black; -fx-padding: 4;">
+          <children>
+            <Label layoutX="7.0" layoutY="10.0" text="Status:"/>
+            <Label fx:id="statusLabel" layoutX="51.0" layoutY="10.0" text="Idle"/>
+          </children>
+        </AnchorPane>
       </children>
     </HBox>
   </children>
