@@ -85,10 +85,3 @@ ScreenBreak/
 ├── config.properties   # saved interval + sound preferences
 └── sounds/             # the imported alert sound
 ```
-
-## How it works
-
-- **`ReminderTimer`** owns a JavaFX `Timeline` that ticks once per second. It exposes two observable properties — `progressProperty()` (0.0 → 1.0) and `timeTextProperty()` (`"3 / 20 minutes"`) — and fires the break `Alert` when an interval completes. If a sound alert is enabled, it plays the `MediaPlayer` it was handed via `setMediaPlayer(...)`; it doesn't build the media itself, keeping timing and playback concerns separate.
-- **`TimerControl`** is a thin FXML controller: in `initialize()` it *binds* the progress bar and label directly to the timer's properties, so the UI stays in sync automatically. The Start/Stop buttons just delegate to `ReminderTimer.start(minutes)` / `stop()`. It also owns sound selection — building the `MediaPlayer` from the chosen file and passing it to the timer — and persists settings through `AppData`.
-- **`AppData`** resolves the per-user storage folder, loads/saves `config.properties`, and imports the selected sound into its `sounds/` folder (so the app owns a copy rather than depending on the original file's location). A newly picked sound replaces any previous one.
-- **`App`** loads `timerControl.fxml`, sets up the AWT system tray, and keeps the JVM alive after the window closes via `Platform.setImplicitExit(false)`.
