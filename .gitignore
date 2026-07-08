@@ -10,6 +10,7 @@ build/
 
 # Compiled Java class files
 *.class
+dependency-reduced-pom.xml
 
 # Log files
 *.log
