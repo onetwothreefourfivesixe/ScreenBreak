@@ -31,8 +31,21 @@ public class App extends Application {
         this.stage = stage;
         scene = new Scene(loadFXML("timerControl"), 640, 480);
         stage.setScene(scene);
-        setupSystemTray();
+        stage.setTitle("ScreenBreak");
+        // Window title-bar / taskbar / Alt+Tab icon (separate from the .exe icon).
+        URL windowIconUrl = App.class.getResource("/newIcon.png");
+        if (windowIconUrl != null) {
+            stage.getIcons().add(new javafx.scene.image.Image(windowIconUrl.toExternalForm()));
+        }
+        // Show the window FIRST and unconditionally. The tray is a nice-to-have;
+        // if its setup fails (e.g. AWT/tray quirks on some machines) it must never
+        // stop the main window from appearing.
         stage.show();
+        try {
+            setupSystemTray();
+        } catch (Exception e) {
+            System.out.println("System tray setup failed: " + e.getMessage());
+        }
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -56,6 +69,11 @@ public class App extends Application {
 
         // Load an image for the icon (ensure you have an icon.png in your resources)
         URL imageUrl = App.class.getResource("/newIcon.png");
+        if (imageUrl == null) {
+            // getImage(null) would throw and abort tray setup; skip the tray instead.
+            System.out.println("Tray icon resource /newIcon.png not found; skipping system tray.");
+            return;
+        }
         Image image = Toolkit.getDefaultToolkit().getImage(imageUrl);
 
         // Create the tray icon

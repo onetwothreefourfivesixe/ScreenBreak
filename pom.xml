@@ -8,7 +8,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
         <!-- jpackage rejects SNAPSHOT/text versions; keep a numeric app version here. -->
-        <app.version>1.0.0</app.version>
+        <app.version>0.1.0</app.version>
+        <app.icon>${project.basedir}/src/main/resources/ScreenBreak.ico</app.icon>
     </properties>
     <dependencies>
         <dependency>
@@ -81,6 +82,8 @@
                     <name>ScreenBreak</name>
                     <appVersion>${app.version}</appVersion>
                     <vendor>com.reminder</vendor>
+                    <!-- Windows requires a .ico; used for the .exe and taskbar icon. -->
+                    <icon>${app.icon}</icon>
                     <runtimeImage>${project.build.directory}/runtime</runtimeImage>
                     <module>com.reminder/com.reminder.App</module>
                     <destination>${project.build.directory}/dist</destination>
@@ -152,5 +155,12 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+    <id>icon-unix</id>
+        <activation><os><family>unix</family></os></activation>
+        <properties>
+            <app.icon>${project.basedir}/src/main/resources/newIcon.png</app.icon>
+        </properties>
+    </profile>
     </profiles>
 </project>
