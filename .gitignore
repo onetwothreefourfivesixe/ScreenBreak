@@ -30,7 +30,7 @@ dependency-reduced-pom.xml
 # VS Code settings
 .vscode/
 .qodo/
-.github/
+# .github/
 
 # OS-specific files
 .DS_Store

@@ -1,0 +1,58 @@
+name: Build & Release
+
+on:
+  push:
+    tags: ['v*']        # e.g. push tag v0.1.0 to trigger a release
+  workflow_dispatch: {}  # or run it manually from the Actions tab
+
+permissions:
+  contents: write        # allows creating the GitHub Release
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            package: Compress-Archive -Path target/dist/ScreenBreak/* -DestinationPath ScreenBreak-windows.zip
+          - os: ubuntu-latest
+            package: tar -czf ScreenBreak-linux.tar.gz -C target/dist ScreenBreak
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Install jpackage deps (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y binutils fakeroot
+
+      - name: Build native app-image
+        run: mvn -B clean package
+
+      - name: Package artifact
+        run: ${{ matrix.package }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ScreenBreak-${{ runner.os }}
+          path: |
+            ScreenBreak-*.zip
+            ScreenBreak-*.tar.gz
+          if-no-files-found: ignore
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist }
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*
