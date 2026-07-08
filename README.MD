@@ -13,6 +13,63 @@ ScreenBreak is a small JavaFX based desktop app that reminds you to rest your ey
 - **System tray integration** — closing the window keeps the app running in the tray; right-click the tray icon to reopen or exit.
 - **Responsive layout** — the window contents reflow as you resize.
 
+## Installation
+
+Prebuilt, self-contained packages (a trimmed Java runtime is bundled, so **no separate Java install is required**) are attached to each [GitHub Release](../../releases). Grab the download for your platform from the latest release's **Assets** list.
+
+### Windows
+
+1. Download **`ScreenBreak-windows.zip`**.
+2. Right-click the zip → **Extract All…** to a folder you'll keep (e.g. `C:\Program Files\ScreenBreak` or your user folder).
+3. Open the extracted `ScreenBreak` folder and double-click **`ScreenBreak.exe`**.
+4. If SmartScreen warns about an unsigned app, click **More info → Run anyway** (this is expected for a beta that isn't code-signed yet).
+
+> Prefer a traditional installer with a Start-menu entry? A Windows `.msi` can be built from source with `mvn clean package -P installer` (requires the [WiX Toolset v3](https://wixtoolset.org/)).
+
+### Linux
+
+1. Download **`ScreenBreak-linux.tar.gz`**.
+2. Extract it: `tar -xzf ScreenBreak-linux.tar.gz`
+3. Launch it: `./ScreenBreak/bin/ScreenBreak`
+
+### macOS
+
+A prebuilt macOS package isn't published yet. Build and run it from source using the [Build & run](#build--run) steps below.
+
+## Start ScreenBreak automatically on login
+
+ScreenBreak is most useful when it's always running, so it can nudge you throughout the day. Here's how to have your OS launch it at startup. (It minimizes to the system tray, so it stays out of your way.)
+
+### Windows (startup)
+
+1. Press <kbd>Win</kbd> + <kbd>R</kbd>, type **`shell:startup`**, and press <kbd>Enter</kbd> — this opens your Startup folder.
+2. Right-click **`ScreenBreak.exe`** (from where you extracted it) → **Show more options → Send to → Desktop (create shortcut)**, or hold <kbd>Alt</kbd> and drag it to create a shortcut.
+3. Move that shortcut into the Startup folder from step 1.
+
+ScreenBreak will now launch each time you log in. (Remove the shortcut from that folder to stop auto-starting.)
+
+### macOS (startup)
+
+1. Open **System Settings → General → Login Items & Extensions**.
+2. Under **Open at Login**, click the **+** button and select **ScreenBreak.app**.
+
+### Linux (startup)
+
+Most desktop environments run any `.desktop` file placed in `~/.config/autostart/` at login. Create one pointing at the launcher:
+
+```sh
+mkdir -p ~/.config/autostart
+cat > ~/.config/autostart/screenbreak.desktop <<EOF
+[Desktop Entry]
+Type=Application
+Name=ScreenBreak
+Exec=/full/path/to/ScreenBreak/bin/ScreenBreak
+X-GNOME-Autostart-enabled=true
+EOF
+```
+
+Replace `/full/path/to/ScreenBreak` with the folder where you extracted the app. (GNOME users can alternatively use the **Startup Applications** tool if installed.)
+
 ## Tech stack
 
 - **Java 25** (`maven.compiler.release=25`)
